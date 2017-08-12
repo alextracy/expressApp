@@ -73,14 +73,22 @@ app.post('/users/add', function(req, res){
     // Need to use this soon
     // var errors = req.getValidationResult();
     
-    if(errors){
-        console.log('SUCCESS');
-        res.render('index', {
-            title: 'Customers',
-            users: users,
-            errors: errors
-        });
-    } else {
+    req.getValidationResult().then(function (result) {
+        if (!result.isEmpty()) {
+            var errors = result.array().map(function (elem) {
+                return elem.msg;
+            });
+            console.log('There are following validation errors: ' + errors.join('&&'));
+            res.render('register', { errors: errors });
+        } else {
+    // if(errors){
+    //     console.log('SUCCESS');
+    //     res.render('index', {
+    //         title: 'Customers',
+    //         users: users,
+    //         errors: errors
+    //     });
+    // } else {
         var newUser = {
             first_name: req.body.first_name,
             last_name: req.body.last_name,
